@@ -11,9 +11,9 @@ a high-performance library aimed at quantum circuit simulations on the NVIDIA GP
 
 We provide two core functionalities:
 
-* *Exact value calculation*: use ``GeneralState`` and ``GenearlBraOpKet`` to translate a ``pytket`` into a tensor network and obtain amplitudes and expectation values via full tensor network contraction using ``cuQuantum``'s optimised contraction path.
+* *Exact value calculation*: use :py:class:`~.GeneralState` and :py:class:`~.GeneralBraOpKet` to translate a ``pytket`` into a tensor network and obtain amplitudes and expectation values via full tensor network contraction using ``cuQuantum``'s optimised contraction path.
 
-* *Approximate state evolution*: use ``simulate`` to simulate a ``pytket`` circuit, returning a tensor network representation of the approximate output state, from which you can query properties, such as amplitudes and expectation values.
+* *Approximate state evolution*: use :py:func:`~.simulate` to simulate a ``pytket`` circuit, returning a tensor network representation of the approximate output state, from which you can query properties, such as amplitudes and expectation values.
 
 
 ``pytket-cutensornet`` is available for Python 3.10, 3.11 and 3.12 on Linux.

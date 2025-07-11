@@ -92,7 +92,7 @@ def circuit_statevector_postselect(
 ) -> NDArray:
     """Post selects a circuit statevector. recursively calls
     itself if there are multiple post select qubits. Should only be
-    used for testing small circuits as it uses the circuit.get_unitary() method.
+    used for testing small circuits as it uses the :py:meth:`pytket._tket.circuit.Circuit.get_unitary` method.
 
     Args:
         circ: Circuit.

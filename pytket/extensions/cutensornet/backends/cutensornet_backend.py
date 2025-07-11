@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Methods to allow tket circuits to be run on the cuTensorNet simulator."""
-
 from abc import abstractmethod
 from collections.abc import Sequence
 from uuid import uuid4
@@ -48,7 +46,7 @@ from .._metadata import __extension_name__, __extension_version__
 
 
 class _CuTensorNetBaseBackend(Backend):
-    """A pytket Backend wrapping around the ``GeneralState`` simulator."""
+    """A pytket :py:class:`~pytket.backends.backend.Backend` wrapping around the :py:class:`~.GeneralState` simulator."""
 
     _persistent_handles = False
 
@@ -81,7 +79,7 @@ class _CuTensorNetBaseBackend(Backend):
 
     def rebase_pass(self) -> BasePass:
         """This method returns a dummy pass that does nothing, since there is
-        no need to rebase. It is provided by requirement of a child of Backend,
+        no need to rebase. It is provided by requirement of a child of :py:class:`~pytket.backends.backend.Backend`,
         but it should not be included in the documentation.
         """
         return CustomPass(lambda circ: circ)  # Do nothing
@@ -121,7 +119,7 @@ class _CuTensorNetBaseBackend(Backend):
         """Returns circuit status object.
 
         Returns:
-            CircuitStatus object.
+            :py:class:`~pytket.backends.status.CircuitStatus` object.
 
         Raises:
             CircuitNotRunError: if there is no handle object in cache.
@@ -158,7 +156,7 @@ class _CuTensorNetBaseBackend(Backend):
 
 
 class CuTensorNetStateBackend(_CuTensorNetBaseBackend):
-    """A pytket Backend using ``GeneralState`` to obtain state vectors."""
+    """A pytket :py:class:`~pytket.backends.backend.Backend` using :py:class:`~.GeneralState` to obtain state vectors."""
 
     _supports_state = True
 
@@ -233,7 +231,7 @@ class CuTensorNetStateBackend(_CuTensorNetBaseBackend):
 
 
 class CuTensorNetShotsBackend(_CuTensorNetBaseBackend):
-    """A pytket Backend using ``GeneralState`` to obtain shots."""
+    """A pytket :py:class:`~pytket.backends.backend.Backend` using :py:class:`~.GeneralState` to obtain shots."""
 
     _supports_shots = True
     _supports_counts = True
@@ -282,7 +280,7 @@ class CuTensorNetShotsBackend(_CuTensorNetBaseBackend):
                 Optionally, this can be a list of shots specifying the number of shots
                 for each circuit separately.
             valid_check: Whether to check for circuit correctness.
-            seed: An optional RNG seed. Different calls to ``process_circuits`` with the
+            seed: An optional RNG seed. Different calls to :py:meth:`~.process_circuits` with the
                 same seed will generate the same list of shot outcomes.
             tnconfig: Optional. A dict of cuTensorNet ``TNConfig`` keys and
                 their values.

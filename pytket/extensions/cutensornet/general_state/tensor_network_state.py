@@ -53,7 +53,7 @@ class GeneralState:
         Preferably used as ``with GeneralState(...) as state:`` so that GPU memory is
         automatically released after execution.
 
-        The ``circuit`` must not contain any ``CircBox`` or non-unitary command.
+        The ``circuit`` must not contain any :py:class:`~pytket.circuit.CircBox` or non-unitary command.
 
     Args:
         circuit: A pytket circuit to be converted into a tensor network.
@@ -148,8 +148,7 @@ class GeneralState:
         """Contracts the circuit and returns the final statevector.
 
         Args:
-            symbol_map: A dictionary where each element of the pytket circuit's
-                ``.free_symbols()`` is assigned a real number.
+            symbol_map: A dictionary where each element of :py:meth`pytket._tket.circuit.Circuit.free_symbols` is assigned a real number.
             on_host: Optional. If ``True``, converts cupy ``ndarray`` to numpy
                 ``ndarray``, copying it to host device (CPU). Defaults to ``True``.
         Returns:
@@ -185,8 +184,7 @@ class GeneralState:
         Args:
             state: The integer whose bitstring describes the computational state.
                 The qubits in the bitstring are in increasing lexicographic order.
-            symbol_map: A dictionary where each element of the pytket circuit's
-                ``.free_symbols()`` is assigned a real number.
+            symbol_map: A dictionary where each element of :py:meth:`pytket._tket.circuit.Circuit.free_symbols` is assigned a real number.
 
         Returns:
             The amplitude of the computational state in ``self``.
@@ -213,8 +211,7 @@ class GeneralState:
 
         Args:
             operator: The operator whose expectation value is to be calculated.
-            symbol_map: A dictionary where each element of the pytket circuit's
-                ``.free_symbols()`` is assigned a real number.
+            symbol_map: A dictionary where each element of :py:meth:`pytket._tket.circuit.Circuit.free_symbols` is assigned a real number.
 
         Returns:
             The expectation value.
@@ -258,13 +255,12 @@ class GeneralState:
 
         Args:
             n_shots: The number of samples to obtain.
-            symbol_map: A dictionary where each element of the pytket circuit's
-                ``.free_symbols()`` is assigned a real number.
-            seed: An optional RNG seed. Different calls to ``sample`` with the same
+            symbol_map: A dictionary where each element of :py:meth:`pytket._tket.circuit.Circuit.free_symbols` is assigned a real number.
+            seed: An optional RNG seed. Different calls to :py:meth:`~.sample` with the same
                 seed will generate the same list of shot outcomes.
 
         Returns:
-            A pytket ``BackendResult`` with the data from the shots.
+            A :py:class:`~pytket.backends.backendresult.BackendResult` with the data from the shots.
 
         Raises:
             ValueError: If the circuit contains no measurements.
@@ -320,7 +316,7 @@ class GeneralState:
 
         The preferred approach is to use a context manager as in
         ``with GeneralState(...) as state:``. Otherwise, the user must release
-        memory explicitly by calling ``destroy()``.
+        memory explicitly by calling :py:meth:`destroy`.
         """
         self._logger.debug("Freeing memory of GeneralState")
         self.tn_state.free()
@@ -342,9 +338,9 @@ class GeneralBraOpKet:
         Preferably used as ``with GeneralBraOpKet(...) as braket:`` so that GPU memory
         is automatically released after execution.
 
-        The circuits must not contain any ``CircBox`` or non-unitary command.
+        The circuits must not contain any :py:class:`~pytket.circuit.CircBox` or non-unitary command.
 
-        The operator is provided when ``contract`` is called.
+        The operator is provided when :py:meth:`~.contract` is called.
 
     Args:
         bra: A pytket circuit describing the ``|bra>`` state.
@@ -512,10 +508,10 @@ class GeneralBraOpKet:
         """Contract the tensor network to obtain the value of ``<bra|operator|ket>``.
 
         Args:
-            operator: A pytket ``QubitPauliOperator`` describing the operator. If not
+            operator: A :py:class:`pytket.utils.operators.QubitPauliOperator` describing the operator. If not
                 given, then the identity operator is used, so it computes inner product.
             symbol_map: A dictionary where each element of both pytket circuits'
-                ``.free_symbols()`` is assigned a real number.
+                :py:meth:`~pytket._tket.circuit.Circuit.free_symbols` is assigned a real number.
 
         Returns:
             The value of ``<bra|operator|ket>``.
@@ -586,7 +582,7 @@ class GeneralBraOpKet:
 
         The preferred approach is to use a context manager as in
         ``with GeneralBraOpKet(...) as braket:``. Otherwise, the user must release
-        memory explicitly by calling ``destroy()``.
+        memory explicitly by calling :py:meth:`~.destroy`.
         """
         self._logger.debug("Freeing memory of GeneralBraOpKet")
         self.tn.free()
@@ -608,7 +604,7 @@ def _formatted_tensor(matrix: NDArray, n_qubits: int) -> cp.ndarray:
 
 
 def _remove_meas_and_implicit_swaps(circ: Circuit) -> tuple[Circuit, dict[Qubit, Bit]]:
-    """Convert a pytket Circuit to an equivalent circuit with no measurements or
+    """Convert a pytket :py:class:`~pytket._tket.circuit.Circuit` to an equivalent circuit with no measurements or
     implicit swaps. The measurements are returned as a map between qubits and bits.
 
     Only supports end-of-circuit measurements, which are removed from the returned
