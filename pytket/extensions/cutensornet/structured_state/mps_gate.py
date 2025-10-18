@@ -599,61 +599,42 @@ class MPSxGate(MPS):
         ### Setup SVD configuration depending on user's settings ###
         ############################################################
 
+        # Apply SVD decomposition and truncate up to a `max_extent` (for the shared
+        # bond) of `self._cfg.chi`.
+        # If the user did not explicitly ask for truncation, `self._cfg.chi` will be
+        # set to a very large default number, so it's like no `max_extent` was set.
+        # Still, we remove any singular values below ``self._cfg.zero``.
+        self._logger.debug(f"Truncating to (or below) chosen chi={self._cfg.chi}")  # noqa: G004
+
+        default_svd_method = tensor.SVDMethod(
+            abs_cutoff=self._cfg.zero,
+            max_extent=self._cfg.chi,
+            partition="U",  # Contract S directly into U (to the "left")
+            normalization="L2",  # Sum of squares singular values must equal 1
+        )
+
+        # If the user requested truncation_fidelity, then find the largest bond
+        # dimension along the path and truncate as much as possible before exceeding
+        # a `discarded_weight_cutoff` of `1 - self._cfg.truncation_fidelity`.
         if self._cfg.truncation_fidelity < 1:
-            # Apply SVD decomposition to truncate as much as possible before exceeding
-            # a `discarded_weight_cutoff` of `1 - self._cfg.truncation_fidelity`.
             self._logger.debug(
                 f"Truncating to target fidelity={self._cfg.truncation_fidelity}"  # noqa: G004
             )
 
-            # When there are multiple virtual bonds between the two MPS tensors where
-            # the gate is applied (i.e. non-adjacent qubits) we need to distribute the
-            # allowed truncation error among the different bonds.
-            # Our target is to assign a local truncation fidelity `f_i` to each bond
-            # `i` in the input lists so that the lower bound of the fidelity satisfies:
-            #
-            #   real_fidelity > self.fidelity*prod(f_i) > self.fidelity*trunc_fidelity
-            #
-            # Let e_i = 1 - f_i, where we refer to `e_i` as the "truncation error at i".
-            # We can use that when 0 < e_i < 1, it holds that:
-            #
-            #   prod(1 - e_i)   >   1 - sum(e_i)
-            #
-            # Hence, as long as we satisfy
-            #
-            #   1 - sum(e_i)    >    truncation_fidelity
-            #
-            # the target inquality at the top will be satisfied for our chosen f_i.
-            # We achieve this by defining e_i = (1 - trunc_fid) / k, where k is the
-            # number of bonds between the two tensors.
-            distance = r_pos - l_pos
-            if distance == 0:
-                local_truncation_error = 1 - self._cfg.truncation_fidelity
-            else:
-                local_truncation_error = (1 - self._cfg.truncation_fidelity) / distance
+            max_dim = 0
+            truncate_more_at_pos = l_pos
+            for pos in range(l_pos, r_pos):
+                _, right_dim = self.get_virtual_dimensions(pos)
+                if max_dim < right_dim:
+                    max_dim = right_dim
+                    truncate_more_at_pos = pos
             self._logger.debug(
-                f"There are {distance} bonds between the qubits. Each of these will "  # noqa: G004
-                f"be truncated to target fidelity={1 - local_truncation_error}"
+                f"Truncating more at position {truncate_more_at_pos}"  # noqa: G004
             )
 
-            svd_method = tensor.SVDMethod(
+            weight_cutoff_svd_method = tensor.SVDMethod(
                 abs_cutoff=self._cfg.zero,
-                discarded_weight_cutoff=local_truncation_error,
-                partition="U",  # Contract S directly into U (to the "left")
-                normalization="L2",  # Sum of squares singular values must equal 1
-            )
-
-        else:
-            # Apply SVD decomposition and truncate up to a `max_extent` (for the shared
-            # bond) of `self._cfg.chi`.
-            # If the user did not explicitly ask for truncation, `self._cfg.chi` will be
-            # set to a very large default number, so it's like no `max_extent` was set.
-            # Still, we remove any singular values below ``self._cfg.zero``.
-            self._logger.debug(f"Truncating to (or below) chosen chi={self._cfg.chi}")  # noqa: G004
-
-            svd_method = tensor.SVDMethod(
-                abs_cutoff=self._cfg.zero,
-                max_extent=self._cfg.chi,
+                discarded_weight_cutoff=1 - self._cfg.truncation_fidelity,
                 partition="U",  # Contract S directly into U (to the "left")
                 normalization="L2",  # Sum of squares singular values must equal 1
             )
@@ -664,6 +645,11 @@ class MPSxGate(MPS):
 
         # From right to left, so that we can use the current canonical form.
         for pos in reversed(range(l_pos, r_pos)):
+            if self._cfg.truncation_fidelity < 1 and pos == truncate_more_at_pos:
+                svd_method = weight_cutoff_svd_method
+            else:
+                svd_method = default_svd_method
+
             self.tensors[pos], S, self.tensors[pos + 1], info = contract_decompose(
                 "abl,bcr->abl,bcr",  # Note: doesn't follow the glossary above.
                 self.tensors[pos],
@@ -692,10 +678,6 @@ class MPSxGate(MPS):
                 "Reduced virtual bond dimension from "  # noqa: G004
                 f"{info.svd_info.full_extent} to {info.svd_info.reduced_extent}."
             )
-
-        if self._cfg.truncation_fidelity < 1:
-            # Sanity check: user's requested lower bound of fidelity satisfied
-            assert self.fidelity > orig_fidelity * self._cfg.truncation_fidelity
 
         # If requested, provide info about memory usage.
         if self._logger.isEnabledFor(logging.INFO):
