@@ -754,8 +754,18 @@ def test_postselect_circ(request: Any, circname: str, postselect_dict: dict) -> 
         QubitPauliString({Qubit(0): Pauli.X, Qubit(1): Pauli.Z}),
     ],
 )
+@pytest.mark.parametrize(
+    "algorithm",
+    [
+        SimulationAlgorithm.MPSxGate,
+        SimulationAlgorithm.TTNxGate,
+    ],
+)
 def test_expectation_value(
-    request: Any, circname: str, observable: QubitPauliString
+    request: Any,
+    circname: str,
+    observable: QubitPauliString,
+    algorithm: SimulationAlgorithm
 ) -> None:
     circuit = request.getfixturevalue(circname)
     pauli_to_optype = {Pauli.Z: OpType.Z, Pauli.Y: OpType.Z, Pauli.X: OpType.X}
@@ -773,7 +783,7 @@ def test_expectation_value(
     # Simulate the circuit and obtain the expectation value
     with CuTensorNetHandle() as libhandle:
         cfg = Config()
-        mps = simulate(libhandle, circuit, SimulationAlgorithm.MPSxGate, cfg)
+        mps = simulate(libhandle, circuit, algorithm, cfg)
         assert np.isclose(
             mps.expectation_value(observable),
             expectation_value,

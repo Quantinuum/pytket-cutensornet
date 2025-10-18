@@ -30,9 +30,9 @@ try:
 except ImportError:
     warnings.warn("local settings failed to import cutensornet", ImportWarning)  # noqa: B028
 
-from pytket.circuit import Bit, Qubit
+from pytket.circuit import Bit, Qubit, OpType, Op
 from pytket.extensions.cutensornet.general import CuTensorNetHandle, set_logger
-from pytket.pauli import QubitPauliString  # noqa: TC001
+from pytket.pauli import QubitPauliString, Pauli  # noqa: TC001
 
 from .general import Config, LowFidelityException, StructuredState, Tensor
 
@@ -151,6 +151,8 @@ class TTN(StructuredState):
 
             # Create the TreeNodes of the different groups of qubits
             for k, qubits in qubit_partition.items():
+                if len(qubits) > 8:
+                    raise ValueError("Cannot contain more than 8 qubits per leaf.")
                 if k < 0 or k >= n_groups:
                     raise ValueError(
                         f"Keys of qubit_partition must range from 0 to {n_groups - 1}."
@@ -715,7 +717,59 @@ class TTN(StructuredState):
         Raises:
             ValueError: If a key in ``pauli_string`` is not a qubit in the state.
         """
-        raise NotImplementedError(f"Method not implemented in {type(self).__name__}.")
+        self._flush()
+
+        for q in pauli_string.map.keys():  # noqa: SIM118
+            if q not in self.get_qubits():
+                raise ValueError(f"Qubit {q} is not a qubit in the TTN.")
+
+        self._logger.debug(f"Calculating expectation value of {pauli_string}.")  # noqa: G004
+        ttn_copy = self.copy()
+        pauli_optype = {Pauli.Z: OpType.Z, Pauli.X: OpType.X, Pauli.Y: OpType.Y}
+
+        # Apply each of the Pauli operators to the TTN copy
+        for qubit, pauli in pauli_string.map.items():
+            if pauli != Pauli.I:
+                pos = ttn_copy.qubit_position[qubit]
+                pauli_unitary = Op.create(pauli_optype[pauli]).get_unitary()
+                pauli_tensor = cp.asarray(
+                    pauli_unitary.astype(dtype=self._cfg._complex_t, copy=False),
+                    dtype=self._cfg._complex_t,
+                )
+
+                # Glossary of bond IDs
+                # chr(x) -> bond of the x-th qubit in the node (if it is a leaf)
+                # l -> left child bond of the TTN node
+                # r -> right child bond of the TTN node
+                # p -> parent bond of the TTN node
+                # g -> input bond of the Pauli
+                # G -> output bond of the Pauli
+
+                # Contract the Pauli to the TTN tensor of the corresponding qubit
+                path, pos = ttn_copy.qubit_position[qubit]
+                leaf_tensor = ttn_copy.nodes[path].tensor
+                p_bonds = [str(x) for x in range(len(leaf_tensor.shape) - 1)]
+                p_bonds_before = p_bonds.copy()
+                p_bonds_after = p_bonds.copy()
+                p_bonds_before[pos] = "g"
+                p_bonds_after[pos] = "G"
+                ttn_copy.nodes[path].tensor = contract(
+                    f"{"".join(p_bonds_before)}p,Gg->{"".join(p_bonds_after)}p",
+                    leaf_tensor,
+                    pauli_tensor,
+                    options={
+                        "handle": self._lib.handle,
+                        "device_id": self._lib.device_id,
+                    },
+                    optimize={"path": [(0, 1)]},
+                )
+
+        # Obtain the inner product
+        value = self.vdot(ttn_copy)
+        assert np.isclose(value.imag, 0.0, atol=self._cfg._atol)
+
+        self._logger.debug(f"Expectation value is {value.real}.")  # noqa: G004
+        return value.real
 
     def get_fidelity(self) -> float:
         """Returns the current fidelity of the state."""
