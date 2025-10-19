@@ -563,8 +563,8 @@ class StructuredState(ABC):
 def low_memory_truncation(
     signature: str,
     M: cp.ndarray,
-    chi: int,
-    delta: float,
+    partition: str,
+    config: Config,
     options,
 ) -> tuple[cp.ndarray, cp.ndarray, float]:
     M_bonds = signature.split("->")[0]
@@ -582,10 +582,10 @@ def low_memory_truncation(
         if b in M_bonds:
             this_dim = M.shape[M_bonds.index(b)]
         else:
-            this_dim = chi
+            this_dim = config.chi
         shape_A.append(this_dim)
 
-    A = cp.random.random(shape_A) + 1j*cp.random.random(shape_A)
+    A = cp.random.random(shape_A, dtype=config._real_t) + 1j*cp.random.random(shape_A, dtype=config._real_t)
     flipped = False
     f_prev = 0
     stop = False
@@ -604,11 +604,20 @@ def low_memory_truncation(
             f = contract(f"{Q_bonds},{Q_bonds}->", F, F.conj(), options=options, optimize={'path': [(0,1)]})
         B = F / cp.sqrt(f)
 
-        stop = f - f_prev < delta and not flipped
+        stop = f - f_prev < config.optim_delta and not flipped
         f_prev = f
         flipped = not flipped
         M = M.conj()  # We do complex conjugate here, but transpose explicitly on indices for better performance
         A = B.conj()  # We do complex conjugate here, but transpose explicitly on indices for better performance
     qb_fidelity = abs(f).item()
 
-    return Q, B, qb_fidelity
+    if partition == "V":
+        return Q, B, qb_fidelity
+    elif partition == "U":
+        V_bonds = B_bonds.replace(truncated_bond, "x")
+        V, R = tensor.decompose(f"{B_bonds}->{V_bonds},{truncated_bond}x", B, method=tensor.QRMethod(), options=options)
+        U_bonds = Q_bonds.replace(truncated_bond, "x")
+        U = contract(f"{Q_bonds},{truncated_bond}x->{U_bonds}", Q, R, options=options, optimize={'path': [(0,1)]})
+        return U, V, qb_fidelity
+    else:
+        raise ValueError(f"Partition {partition} not supported.")

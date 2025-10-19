@@ -458,6 +458,7 @@ class TTNxGate(TTN):
                     partition="V" if towards_root else "U",  # Contract S to parent or child
                     normalization="L2",  # Sum of squares equal 1
                 )
+                partition="V" if towards_root else "U"
 
             # U, S, V, svd_info = tensor.decompose(
             #     "cp->cs,sp",
@@ -470,8 +471,8 @@ class TTNxGate(TTN):
             U, V, this_fidelity = low_memory_truncation(
                 "cp->cs,sp",
                 bond_tensor,
-                chi=self._cfg.chi,
-                delta=self._cfg.optim_delta,
+                partition=partition,
+                config=self._cfg,
                 options=options,
             )
 
