@@ -32,6 +32,7 @@ from pytket.pauli import QubitPauliString
 
 try:
     import cupy as cp  # type: ignore
+    from cuquantum.tensornet import contract, tensor  # type: ignore
 except ImportError:
     warnings.warn("local settings failed to import cupy", ImportWarning)  # noqa: B028
 
@@ -557,3 +558,57 @@ class StructuredState(ABC):
     @abstractmethod
     def _flush(self) -> None:
         raise NotImplementedError(f"Method not implemented in {type(self).__name__}.")
+
+
+def low_memory_truncation(
+    signature: str,
+    M: cp.ndarray,
+    chi: int,
+    delta: float,
+    options,
+) -> tuple[cp.ndarray, cp.ndarray, float]:
+    M_bonds = signature.split("->")[0]
+    Q_bonds = signature.split("->")[1].split(",")[0]
+    B_bonds = signature.split("->")[1].split(",")[1]
+    truncated_bond = ""
+    for b in Q_bonds:
+        if b in B_bonds:
+            truncated_bond = b
+    assert truncated_bond != ""
+    assert "x" not in M_bonds and "x" != truncated_bond
+
+    shape_A = list()
+    for b in Q_bonds:
+        if b in M_bonds:
+            this_dim = M.shape[M_bonds.index(b)]
+        else:
+            this_dim = chi
+        shape_A.append(this_dim)
+
+    A = cp.random.random(shape_A) + 1j*cp.random.random(shape_A)
+    flipped = False
+    f_prev = 0
+    stop = False
+
+    while not stop:
+        if not flipped:
+            A_bonds = Q_bonds.replace(truncated_bond, "x")
+            Q, _ = tensor.decompose(f"{A_bonds}->{Q_bonds},{truncated_bond}x", A, method=tensor.QRMethod(), options=options)
+            F = contract(f"{M_bonds},{Q_bonds}->{B_bonds}", M, Q.conj(), options=options, optimize={'path': [(0,1)]})
+            f = contract(f"{B_bonds},{B_bonds}->", F, F.conj(), options=options, optimize={'path': [(0,1)]})
+
+        else:  # To avoid needing to do the transpose of M and B, we transpose their indices here
+            A_bonds = B_bonds.replace(truncated_bond, "x")
+            Q, _ = tensor.decompose(f"{A_bonds}->{B_bonds},{truncated_bond}x", A, method=tensor.QRMethod(), options=options)
+            F = contract(f"{M_bonds},{B_bonds}->{Q_bonds}", M, Q.conj(), options=options, optimize={'path': [(0,1)]})
+            f = contract(f"{Q_bonds},{Q_bonds}->", F, F.conj(), options=options, optimize={'path': [(0,1)]})
+        B = F / cp.sqrt(f)
+
+        stop = f - f_prev < delta and not flipped
+        f_prev = f
+        flipped = not flipped
+        M = M.conj()  # We do complex conjugate here, but transpose explicitly on indices for better performance
+        A = B.conj()  # We do complex conjugate here, but transpose explicitly on indices for better performance
+    qb_fidelity = abs(f).item()
+
+    return Q, B, qb_fidelity

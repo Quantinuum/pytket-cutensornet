@@ -28,6 +28,7 @@ except ImportError:
 from pytket.circuit import Qubit  # noqa: TC001
 
 from .ttn import TTN, DirTTN, RootPath
+from .general import low_memory_truncation
 
 
 class TTNxGate(TTN):
@@ -439,6 +440,7 @@ class TTNxGate(TTN):
                     partition="V" if towards_root else "U",  # Contract S to parent or child
                     normalization="L2",  # Sum of squares equal 1
                 )
+                assert False, "Unsupported... atm (experimenting with varQR so only chi)"
 
 
             else:
@@ -457,14 +459,21 @@ class TTNxGate(TTN):
                     normalization="L2",  # Sum of squares equal 1
                 )
 
-            U, S, V, svd_info = tensor.decompose(
+            # U, S, V, svd_info = tensor.decompose(
+            #     "cp->cs,sp",
+            #     bond_tensor,
+            #     method=svd_method,
+            #     options=options,
+            #     return_info=True,
+            # )
+            # assert S is None  # Due to "partition" option in SVDMethod
+            U, V, this_fidelity = low_memory_truncation(
                 "cp->cs,sp",
                 bond_tensor,
-                method=svd_method,
+                chi=self._cfg.chi,
+                delta=self._cfg.optim_delta,
                 options=options,
-                return_info=True,
             )
-            assert S is None  # Due to "partition" option in SVDMethod
 
             # discarded_weight is calculated within cuTensorNet as:
             #                             sum([s**2 for s in S'])
@@ -477,7 +486,7 @@ class TTNxGate(TTN):
             #
             # We multiply the fidelity of the current step to the overall fidelity
             # to keep track of a lower bound for the fidelity.
-            this_fidelity = 1.0 - svd_info.discarded_weight
+            # this_fidelity = 1.0 - svd_info.discarded_weight
             self.fidelity *= this_fidelity
             dimension_after = V.shape[0]
 
