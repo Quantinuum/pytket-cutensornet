@@ -4,19 +4,17 @@ build
 dist
 *.pyc
 .vscode
+.venv
 .mypy_cache
 .hypothesis
 obj
 docs/extensions
 .ipynb_checkpoints
-pytket/extensions/cutensornet/_metadata.py
-playground/
-# nix artifacts
-result
-.direnv
-.envrc
-.venv
+.DS_Store
+node_modules
+uv.lock
 docs/pyproject.toml
 docs/poetry.lock
-.jupyter_cache/
-jupyter_execute/
+docs/uv.lock
+docs/conf.py
+docs/_static
