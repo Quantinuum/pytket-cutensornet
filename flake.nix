@@ -9,7 +9,7 @@
   '';
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
-    tket.url = "github:CQCL/tket";
+    tket.url = "github:Quantinuum/tket";
     nixpkgs.follows = "tket/nixpkgs";
     nixgl.url = "github:nix-community/nixGL";
   };

@@ -50,5 +50,5 @@ using ``conda-forge``. This will include the necessary dependencies from CUDA to
 .. toctree::
    :caption: Useful links
 
-   Issue tracker <https://github.com/CQCL/pytket-cutensornet/issues>
+   Issue tracker <https://github.com/Quantinuum/pytket-cutensornet/issues>
    PyPi <https://pypi.org/project/pytket-cutensornet/>
