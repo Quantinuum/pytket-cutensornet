@@ -330,7 +330,7 @@ class MPSxGate(MPS):
         """
         options = {"handle": self._lib.handle, "device_id": self._lib.device_id}
 
-        pos_qubit_map = {self.qubit_position[q]: q for q in controls + [target]}
+        pos_qubit_map = {self.qubit_position[q]: q for q in controls + [target]}  # noqa: RUF005
         l_pos = min(pos_qubit_map.keys())
         r_pos = max(pos_qubit_map.keys())
         t_pos = self.qubit_position[target]
@@ -347,7 +347,8 @@ class MPSxGate(MPS):
 
         # Define the "connection" tensors depending
         connection = {  # bonds PMpm
-            False: cp.eye(4, dtype=self._cfg._complex_t),  # No connection, just IxI
+            # No connection, just IxI
+            False: cp.eye(4, dtype=self._cfg._complex_t),  # noqa: SLF001
             True: cp.asarray(  # Map |p,m> to |P,M> = |p,m&p>
                 [
                     [1, 1, 0, 0],
@@ -355,21 +356,21 @@ class MPSxGate(MPS):
                     [0, 0, 1, 0],
                     [0, 0, 0, 1],
                 ],
-                dtype=self._cfg._complex_t,
+                dtype=self._cfg._complex_t,  # noqa: SLF001
             ),
         }
         for p, t in connection.items():
             connection[p] = cp.reshape(t, (2, 2, 2, 2))
 
         # Create an initial value for "message tensor" from the left; state |1>
-        lmsg_tensor = cp.zeros(2, dtype=self._cfg._complex_t)
+        lmsg_tensor = cp.zeros(2, dtype=self._cfg._complex_t)  # noqa: SLF001
         lmsg_tensor[1] = 1
         # Apply a Kronecker product with the identity of left bond of l_pos
         l_dim = self.get_virtual_dimensions(l_pos)[0]
         lmsg_tensor = contract(
             "m,ab->mab",
             lmsg_tensor,
-            cp.eye(l_dim, dtype=self._cfg._complex_t),
+            cp.eye(l_dim, dtype=self._cfg._complex_t),  # noqa: SLF001
             options=options,
             optimize={"path": [(0, 1)]},
         )
@@ -395,14 +396,14 @@ class MPSxGate(MPS):
 
         # Repeat, but the other way from `r_pos` to `t_pos`
         # Create an initial value for "message tensor" from the right; state |1>
-        rmsg_tensor = cp.zeros(2, dtype=self._cfg._complex_t)
+        rmsg_tensor = cp.zeros(2, dtype=self._cfg._complex_t)  # noqa: SLF001
         rmsg_tensor[1] = 1
         # Apply a Kronecker product with the identity of right bond of r_pos
         r_dim = self.get_virtual_dimensions(r_pos)[1]
         rmsg_tensor = contract(
             "m,bc->mbc",
             rmsg_tensor,
-            cp.eye(r_dim, dtype=self._cfg._complex_t),
+            cp.eye(r_dim, dtype=self._cfg._complex_t),  # noqa: SLF001
             options=options,
             optimize={"path": [(0, 1)]},
         )
@@ -434,7 +435,7 @@ class MPSxGate(MPS):
                 [1, 1, 1, 0],
                 [0, 0, 0, 1],
             ],
-            dtype=self._cfg._complex_t,
+            dtype=self._cfg._complex_t,  # noqa: SLF001
         )
         and_tensor = cp.reshape(and_tensor, (2, 2, 2))  # Bonds Zxy (where Z is result)
 
@@ -443,7 +444,7 @@ class MPSxGate(MPS):
                 [1, 0, 0, 1],
                 [0, 1, 1, 0],
             ],
-            dtype=self._cfg._complex_t,
+            dtype=self._cfg._complex_t,  # noqa: SLF001
         )
         xor_tensor = cp.reshape(xor_tensor, (2, 2, 2))  # Bonds Zxy (where Z is result)
 
@@ -496,7 +497,7 @@ class MPSxGate(MPS):
         # m,M -> virtual bonds connected to the "message tensor"
 
         # First, create a "message tensor" containing the angle of the Pauli gadget
-        msg_tensor = cp.zeros(2, dtype=self._cfg._complex_t)
+        msg_tensor = cp.zeros(2, dtype=self._cfg._complex_t)  # noqa: SLF001
         phase = 1j * cp.pi * angle / 2
         msg_tensor[0] = cp.exp(-phase)
         msg_tensor[1] = cp.exp(phase)
@@ -505,14 +506,15 @@ class MPSxGate(MPS):
         msg_tensor = contract(
             "m,ab->mab",
             msg_tensor,
-            cp.eye(l_dim, dtype=self._cfg._complex_t),
+            cp.eye(l_dim, dtype=self._cfg._complex_t),  # noqa: SLF001
             options=options,
             optimize={"path": [(0, 1)]},
         )
 
         # Define the "connection" tensors
         connection = {  # bonds PMpm
-            Pauli.I: cp.eye(4, dtype=self._cfg._complex_t),  # No connection, just IxI
+            # No connection, just IxI
+            Pauli.I: cp.eye(4, dtype=self._cfg._complex_t),  # noqa: SLF001
             Pauli.Z: cp.asarray(  # A CX gate so that IZ in pm becomes ZZ in PM
                 [
                     [1, 0, 0, 0],
@@ -520,7 +522,7 @@ class MPSxGate(MPS):
                     [0, 0, 0, 1],
                     [0, 0, 1, 0],
                 ],
-                dtype=self._cfg._complex_t,
+                dtype=self._cfg._complex_t,  # noqa: SLF001
             ),
             Pauli.X: cp.asarray(  # A H*CX*H so that IZ in pm becomes XZ in PM
                 [
@@ -529,7 +531,7 @@ class MPSxGate(MPS):
                     [0.5, -0.5, 0.5, 0.5],
                     [-0.5, 0.5, 0.5, 0.5],
                 ],
-                dtype=self._cfg._complex_t,
+                dtype=self._cfg._complex_t,  # noqa: SLF001
             ),
             Pauli.Y: cp.asarray(  # S*H*CX*H*Sdg so that IZ in pm becomes YZ in PM
                 [
@@ -538,7 +540,7 @@ class MPSxGate(MPS):
                     [0.5j, -0.5j, 0.5, 0.5],
                     [-0.5j, 0.5j, 0.5, 0.5],
                 ],
-                dtype=self._cfg._complex_t,
+                dtype=self._cfg._complex_t,  # noqa: SLF001
             ),
         }
         for p, t in connection.items():
@@ -569,7 +571,7 @@ class MPSxGate(MPS):
         # Finally, contract the `msg_tensor` with the site tensor in `r_pos` and
         # cap off the dangling virtual bond from the "connection" tensor with a |0>
         pauli = pauli_str.map[pos_qubit_map[r_pos]]
-        trivial_tensor = cp.asarray([1, 0], dtype=self._cfg._complex_t)
+        trivial_tensor = cp.asarray([1, 0], dtype=self._cfg._complex_t)  # noqa: SLF001
 
         self.tensors[r_pos] = contract(
             "mab,bcp,PMpm,M->acP",

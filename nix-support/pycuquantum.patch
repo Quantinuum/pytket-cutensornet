@@ -18,15 +18,15 @@ index e91df98..9977f51 100644
 +    #                ]
 +    #return _build_meta.get_requires_for_build_wheel(config_settings) + cuqnt_require
 +    return _build_meta.get_requires_for_build_wheel(config_settings)
- 
- 
+
+
  # Note: We have never promised to support sdist (CUQNT-514). We really cannot
 diff --git a/cuquantum/bindings/_internal/cudensitymat_linux.pyx b/python/cuquantum/bindings/_internal/cudensitymat_linux.pyx
 index 6e26258..0954f6b 100644
 --- a/cuquantum/bindings/_internal/cudensitymat_linux.pyx
 +++ b/cuquantum/bindings/_internal/cudensitymat_linux.pyx
 @@ -90,7 +90,7 @@ cdef void* __cudensitymatWorkspaceGetMemory = NULL
- 
+
  cdef void* load_library() except* nogil:
      cdef void* handle
 -    handle = dlopen("libcudensitymat.so.0", RTLD_NOW | RTLD_GLOBAL)
@@ -39,7 +39,7 @@ index 176471a..947cee0 100644
 --- a/cuquantum/bindings/_internal/custatevec_linux.pyx
 +++ b/cuquantum/bindings/_internal/custatevec_linux.pyx
 @@ -113,7 +113,7 @@ cdef void* __custatevecGetMathMode = NULL
- 
+
  cdef void* load_library() except* nogil:
      cdef void* handle
 -    handle = dlopen("libcustatevec.so.1", RTLD_NOW | RTLD_GLOBAL)
@@ -52,7 +52,7 @@ index a68e879..49ba2ab 100644
 --- a/cuquantum/bindings/_internal/cutensornet_linux.pyx
 +++ b/cuquantum/bindings/_internal/cutensornet_linux.pyx
 @@ -155,7 +155,7 @@ cdef void* __cutensornetStateApplyGeneralChannel = NULL
- 
+
  cdef void* load_library() except* nogil:
      cdef void* handle
 -    handle = dlopen("libcutensornet.so.2", RTLD_NOW | RTLD_GLOBAL)

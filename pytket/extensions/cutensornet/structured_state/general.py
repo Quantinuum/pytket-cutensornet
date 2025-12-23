@@ -35,7 +35,9 @@ try:
 except ImportError:
     warnings.warn("local settings failed to import cupy", ImportWarning)  # noqa: B028
 
-from pytket.extensions.cutensornet import CuTensorNetHandle  # noqa: TC001
+from pytket.extensions.cutensornet import (
+    CuTensorNetHandle,  # noqa: RUF100, TC001, TC001, TC001
+)
 
 from .classical import apply_classical_command, from_little_endian
 

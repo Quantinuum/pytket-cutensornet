@@ -26,10 +26,12 @@ try:
 except ImportError:
     warnings.warn("local settings failed to import cutensornet", ImportWarning)  # noqa: B028
 
-from pytket.circuit import Bit, Qubit  # noqa: TC001
-from pytket.extensions.cutensornet import CuTensorNetHandle  # noqa: TC001
+from pytket.circuit import Bit, Qubit  # noqa: RUF100, TC001, TC001, TC001
+from pytket.extensions.cutensornet import (
+    CuTensorNetHandle,  # noqa: RUF100, TC001, TC001, TC001
+)
 
-from .general import Config, Tensor  # noqa: TC001
+from .general import Config, Tensor  # noqa: RUF100, TC001, TC001, TC001
 from .mps import (
     MPS,
     DirMPS,
@@ -156,7 +158,7 @@ class MPSxMPO(MPS):
         position = self.qubit_position[qubit]
 
         # Apply the gate to the MPS with eager approximation
-        self._aux_mps._apply_1q_unitary(unitary, qubit)
+        self._aux_mps._apply_1q_unitary(unitary, qubit)  # noqa: SLF001
 
         if len(self) == 1:
             # If there is only one qubit, there is no benefit in using an MPO, so
@@ -220,7 +222,7 @@ class MPSxMPO(MPS):
             self._flush()
 
         # Apply the gate to the MPS with eager approximation
-        self._aux_mps._apply_2q_unitary(unitary, q0, q1)
+        self._aux_mps._apply_2q_unitary(unitary, q0, q1)  # noqa: SLF001
 
         # Reshape into a rank-4 tensor
         gate_tensor = cp.reshape(unitary, (2, 2, 2, 2))
@@ -261,9 +263,9 @@ class MPSxMPO(MPS):
         # intermediate positions
         if r_pos - l_pos != 1:
             # Identity between input/output at physical bonds
-            p_identity = cp.eye(2, dtype=self._cfg._complex_t)
+            p_identity = cp.eye(2, dtype=self._cfg._complex_t)  # noqa: SLF001
             # Identity between left/right virtual bonds
-            v_identity = cp.eye(dim, dtype=self._cfg._complex_t)
+            v_identity = cp.eye(dim, dtype=self._cfg._complex_t)  # noqa: SLF001
             # Create a "crossing" tensor by applying tensor product of these
             crossing = contract(
                 "io,lr->ilro",
@@ -441,24 +443,24 @@ class MPSxMPO(MPS):
                 if pos != len(self) - 1:  # Otherwise, there is nothing cached yet
                     interleaved_rep.append(r_cached_tensors[-1])
                     r_cached_bonds = self._get_column_bonds(pos + 1, DirMPS.LEFT)
-                    interleaved_rep.append(["r", "R"] + r_cached_bonds)
+                    interleaved_rep.append(["r", "R"] + r_cached_bonds)  # noqa: RUF005
             elif direction == DirMPS.RIGHT:  # noqa: SIM102
                 if pos != 0:  # Otherwise, there is nothing cached yet
                     interleaved_rep.append(l_cached_tensors[-1])
                     l_cached_bonds = self._get_column_bonds(pos - 1, DirMPS.RIGHT)
-                    interleaved_rep.append(["l", "L"] + l_cached_bonds)
+                    interleaved_rep.append(["l", "L"] + l_cached_bonds)  # noqa: RUF005
 
             # Figure out the ID of the bonds of the contracted tensor
             if direction == DirMPS.LEFT:
                 # Take the left bond of each of the MPO tensors
                 result_bonds = self._get_column_bonds(pos, DirMPS.LEFT)
                 # Take the left virtual bond of both of the MPS
-                interleaved_rep.append(["l", "L"] + result_bonds)
+                interleaved_rep.append(["l", "L"] + result_bonds)  # noqa: RUF005
             elif direction == DirMPS.RIGHT:
                 # Take the right bond of each of the MPO tensors
                 result_bonds = self._get_column_bonds(pos, DirMPS.RIGHT)
                 # Take the right virtual bond of both of the MPS
-                interleaved_rep.append(["r", "R"] + result_bonds)
+                interleaved_rep.append(["r", "R"] + result_bonds)  # noqa: RUF005
 
             # Contract and store
             T = contract(
@@ -511,12 +513,12 @@ class MPSxMPO(MPS):
             if left_tensor is not None:
                 interleaved_rep.append(left_tensor)
                 left_tensor_bonds = self._get_column_bonds(pos - 1, DirMPS.RIGHT)
-                interleaved_rep.append(["l", "L"] + left_tensor_bonds)
+                interleaved_rep.append(["l", "L"] + left_tensor_bonds)  # noqa: RUF005
                 result_bonds[0] = "L"
             if right_tensor is not None:
                 interleaved_rep.append(right_tensor)
                 right_tensor_bonds = self._get_column_bonds(pos + 1, DirMPS.LEFT)
-                interleaved_rep.append(["r", "R"] + right_tensor_bonds)
+                interleaved_rep.append(["r", "R"] + right_tensor_bonds)  # noqa: RUF005
                 result_bonds[1] = "R"
 
             # Append the bond IDs of the resulting tensor
@@ -542,13 +544,13 @@ class MPSxMPO(MPS):
                     optimize={"path": [(0, 1)]},
                 )
             )
-            assert np.isclose(optim_fidelity.imag, 0.0, atol=self._cfg._atol)
+            assert np.isclose(optim_fidelity.imag, 0.0, atol=self._cfg._atol)  # noqa: SLF001
             optim_fidelity = float(optim_fidelity.real)
 
             # Normalise F and update the variational MPS
             self._aux_mps.tensors[pos] = F / cp.sqrt(
                 optim_fidelity,
-                dtype=self._cfg._complex_t,
+                dtype=self._cfg._complex_t,  # noqa: SLF001
             )
 
             return optim_fidelity

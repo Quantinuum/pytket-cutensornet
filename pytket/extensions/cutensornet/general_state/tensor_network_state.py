@@ -22,8 +22,8 @@ try:
     import cupy as cp  # type: ignore
 except ImportError:
     warnings.warn("local settings failed to import cupy", ImportWarning)  # noqa: B028
-import numpy as np
-from numpy.typing import NDArray  # noqa: TC002
+import numpy as np  # noqa: I001
+from numpy.typing import NDArray  # noqa: RUF100, TC002, TC002, TC002
 from sympy import Expr, Symbol  # type: ignore
 
 from pytket.backends.backendresult import BackendResult
@@ -31,7 +31,7 @@ from pytket.circuit import Bit, Circuit, Op, OpType, Qubit
 from pytket.extensions.cutensornet.general import set_logger
 from pytket.pauli import Pauli
 from pytket.utils import OutcomeArray
-from pytket.utils.operators import QubitPauliOperator  # noqa: TC001
+from pytket.utils.operators import QubitPauliOperator  # noqa: RUF100, TC001, TC001, TC001
 
 try:
     from cuquantum.tensornet.experimental import (  # type: ignore

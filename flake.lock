@@ -104,10 +104,7 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "nixgl": "nixgl",
-        "nixpkgs": [
-          "tket",
-          "nixpkgs"
-        ],
+        "nixpkgs": ["tket", "nixpkgs"],
         "tket": "tket"
       }
     },

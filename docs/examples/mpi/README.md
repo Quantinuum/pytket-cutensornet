@@ -6,5 +6,5 @@ If using a supercomputer, it is highly likely that some MPI library is already i
 
 # Requirements
 
-* `mpi4py`.
-* An MPI library with CUDA awareness.
+- `mpi4py`.
+- An MPI library with CUDA awareness.

@@ -524,7 +524,7 @@ def measure_qubit_state(
     }
 
     sticky_ind = ket.sticky_indices[qubit_id]
-    ket._cuquantum_interleaved.extend([cap[bit_value], [sticky_ind]])
+    ket._cuquantum_interleaved.extend([cap[bit_value], [sticky_ind]])  # noqa: SLF001
     ket.sticky_indices.pop(qubit_id)
     return ket
 

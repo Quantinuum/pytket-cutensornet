@@ -3,8 +3,8 @@ index 105f16b5d..eb36fbc82 100644
 --- a/cupy/_environment.py
 +++ b/cupy/_environment.py
 @@ -461,6 +461,7 @@ You can install the library by:
- 
- 
+
+
  def _get_include_dir_from_conda_or_wheel(major: int, minor: int) -> List[str]:
 +    return ["@cuda_bundle@/include"]
      # FP16 headers from CUDA 12.2+ depends on headers from CUDA Runtime.

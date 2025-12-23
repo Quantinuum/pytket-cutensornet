@@ -21,4 +21,3 @@ symlinkJoin {
     ln -sfn lib $out/lib64
   '';
 }
-
