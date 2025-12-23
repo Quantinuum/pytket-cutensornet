@@ -43,7 +43,7 @@ tracker = "https://github.com/Quantinuum/pytket-cutensornet/issues"
 find = {}
 
 [tool.setuptools.dynamic]
-version = {attr = "_metadata.__extension_version__"}
+version = {attr = "pytket.extensions.cutensornet._metadata.__extension_version__"}
 
 [build-system]
 requires = ["setuptools"]
