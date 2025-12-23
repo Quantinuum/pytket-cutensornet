@@ -30,10 +30,6 @@ dependencies = [
     "networkx >= 2.8.8",
 ]
 
-[project.optional-dependencies]
-TODOOPTDEP = ["pytket >= 2.7.0"]
-
-
 [project.urls]
 documentation = "https://tket.quantinuum.com/extensions/pytket-cutensornet/index.html"
 source = "https://github.com/Quantinuum/pytket-cutensornet"
@@ -58,4 +54,5 @@ dev-dependencies = [
     "hypothesis >=6.111.1,<7",
     "pre-commit >=3.8.0,<4",
     "pyupgrade >=2.29,<4.0",
+    "cupy"
 ]
