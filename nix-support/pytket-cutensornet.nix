@@ -1,6 +1,6 @@
 self: super:
 let
-  metadata = builtins.readFile ../_metadata.py;
+  metadata = builtins.readFile ../pytket/extensions/cutensornet/_metadata.py;
   versions =
     builtins.match ''.*_version__ *= *["']([^"']+)["'].*'' metadata;
   version = if builtins.length versions > 0 then
