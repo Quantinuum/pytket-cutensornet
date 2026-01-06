@@ -33,13 +33,13 @@ from networkx.classes.reportviews import (  # type: ignore
     OutMultiEdgeView,
 )
 from numpy.typing import NDArray
-from sympy import Expr  # type: ignore
-
 from pytket.circuit import Circuit, Qubit
-from pytket.extensions.cutensornet.general import set_logger
 from pytket.pauli import QubitPauliString
 from pytket.utils import Graph, permute_rows_cols_in_unitary
 from pytket.utils.operators import QubitPauliOperator
+from sympy import Expr  # type: ignore
+
+from pytket.extensions.cutensornet.general import set_logger
 
 
 class TensorNetwork:

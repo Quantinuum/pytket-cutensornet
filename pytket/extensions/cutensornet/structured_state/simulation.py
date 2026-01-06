@@ -27,10 +27,11 @@ except ImportError:
 
 from pytket.architecture import Architecture
 from pytket.circuit import Circuit, Command, OpType, Qubit
-from pytket.extensions.cutensornet.general import CuTensorNetHandle, set_logger
 from pytket.passes import DefaultMappingPass
 from pytket.predicates import CompilationUnit
 from pytket.transform import Transform
+
+from pytket.extensions.cutensornet.general import CuTensorNetHandle, set_logger
 
 from .general import Config, StructuredState
 from .mps_gate import MPSxGate

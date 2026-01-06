@@ -31,8 +31,9 @@ except ImportError:
     warnings.warn("local settings failed to import cutensornet", ImportWarning)  # noqa: B028
 
 from pytket.circuit import Bit, Qubit
+from pytket.pauli import QubitPauliString  # noqa: TC002
+
 from pytket.extensions.cutensornet.general import CuTensorNetHandle, set_logger
-from pytket.pauli import QubitPauliString  # noqa: TC001
 
 from .general import Config, LowFidelityException, StructuredState, Tensor
 

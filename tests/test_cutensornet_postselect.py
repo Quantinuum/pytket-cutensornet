@@ -3,8 +3,10 @@ from typing import Any
 import numpy as np
 import pytest
 from cuquantum.tensornet import contract  # type: ignore
-
 from pytket.circuit import Qubit  # type: ignore
+from pytket.pauli import Pauli, QubitPauliString  # type: ignore
+from pytket.utils import QubitPauliOperator
+
 from pytket.extensions.cutensornet.backends import CuTensorNetStateBackend
 from pytket.extensions.cutensornet.general_state.tensor_network_convert import (  # type: ignore
     TensorNetwork,
@@ -14,8 +16,6 @@ from pytket.extensions.cutensornet.general_state.tensor_network_convert import (
 from pytket.extensions.cutensornet.general_state.utils import (
     circuit_statevector_postselect,
 )
-from pytket.pauli import Pauli, QubitPauliString  # type: ignore
-from pytket.utils import QubitPauliOperator
 
 
 @pytest.mark.parametrize(

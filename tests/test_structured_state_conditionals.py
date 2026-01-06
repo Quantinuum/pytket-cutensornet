@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from pytket.circuit import (
     Bit,
     CircBox,
@@ -15,6 +14,7 @@ from pytket.circuit import (
 )
 from pytket.circuit.clexpr import wired_clexpr_from_logic_exp
 from pytket.circuit.logic_exp import BitWiseOp, create_bit_logic_exp
+
 from pytket.extensions.cutensornet.structured_state import (
     Config,
     CuTensorNetHandle,
