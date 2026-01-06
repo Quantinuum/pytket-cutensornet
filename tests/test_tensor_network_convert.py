@@ -6,7 +6,6 @@ from typing import Any
 import numpy as np
 import pytest
 from numpy.typing import NDArray
-
 from pytket.circuit import Qubit, ToffoliBox  # type: ignore
 from pytket.passes import CnXPairwiseDecomposition, DecomposeBoxes  # type: ignore
 from pytket.transform import Transform  # type: ignore
@@ -16,14 +15,15 @@ try:
 except ImportError:
     warnings.warn("local settings failed to import cutensornet", ImportWarning)  # noqa: B028
 from pytket.circuit import Circuit
+from pytket.pauli import Pauli, QubitPauliString
+from pytket.utils.operators import QubitPauliOperator
+
 from pytket.extensions.cutensornet.general_state.tensor_network_convert import (  # type: ignore
     TensorNetwork,
     get_circuit_overlap,
     get_operator_expectation_value,
     tk_to_tensor_network,
 )
-from pytket.pauli import Pauli, QubitPauliString
-from pytket.utils.operators import QubitPauliOperator
 
 
 def state_contract(tn: list[NDArray | list]) -> NDArray:

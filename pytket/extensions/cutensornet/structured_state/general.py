@@ -19,7 +19,6 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 import numpy as np  # type: ignore
-
 from pytket.circuit import (
     Bit,
     Command,
