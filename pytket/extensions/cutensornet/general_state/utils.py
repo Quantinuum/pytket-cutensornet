@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from numpy.typing import NDArray
-
 from pytket.backends.backendresult import BackendResult
 from pytket.circuit import Circuit, Qubit
 

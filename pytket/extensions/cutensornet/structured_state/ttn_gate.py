@@ -25,7 +25,7 @@ try:
 except ImportError:
     warnings.warn("local settings failed to import cutensornet", ImportWarning)  # noqa: B028
 
-from pytket.circuit import Qubit  # noqa: TC001
+from pytket.circuit import Qubit  # noqa: TC002
 
 from .ttn import TTN, DirTTN, RootPath
 

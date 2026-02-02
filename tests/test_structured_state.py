@@ -5,8 +5,10 @@ import cupy as cp  # type: ignore
 import numpy as np  # type: ignore
 import pytest
 from cuquantum.tensornet import contract  # type: ignore
-
 from pytket.circuit import Circuit, OpType, PauliExpBox, Qubit  # type: ignore
+from pytket.passes import CnXPairwiseDecomposition, DecomposeBoxes
+from pytket.pauli import Pauli, QubitPauliString
+
 from pytket.extensions.cutensornet.general_state.utils import (
     circuit_statevector_postselect,
 )
@@ -24,8 +26,6 @@ from pytket.extensions.cutensornet.structured_state import (
     simulate,
 )
 from pytket.extensions.cutensornet.structured_state.ttn import RootPath
-from pytket.passes import CnXPairwiseDecomposition, DecomposeBoxes
-from pytket.pauli import Pauli, QubitPauliString
 
 
 def test_libhandle_manager() -> None:

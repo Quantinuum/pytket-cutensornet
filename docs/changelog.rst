@@ -3,6 +3,12 @@
 Changelog
 ~~~~~~~~~
 
+0.12.1 (January 2025)
+---------------------
+
+* Update docs build to use uv
+* Updated pytket minimum version requirement to 2.11.0.
+
 0.12.0 (May 2025)
 -----------------
 
