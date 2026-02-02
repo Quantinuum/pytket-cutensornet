@@ -26,7 +26,8 @@ try:
 except ImportError:
     warnings.warn("local settings failed to import cutensornet", ImportWarning)  # noqa: B028
 
-from pytket.circuit import Bit, Qubit  # noqa: TC001
+from pytket.circuit import Bit, Qubit  # noqa: TC002
+
 from pytket.extensions.cutensornet import CuTensorNetHandle  # noqa: TC001
 
 from .general import Config, Tensor  # noqa: TC001

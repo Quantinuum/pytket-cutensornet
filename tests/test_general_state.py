@@ -3,14 +3,14 @@ from typing import Any
 
 import numpy as np
 import pytest
-from sympy import Symbol
-
 from pytket.circuit import Bit, Circuit, Qubit, ToffoliBox
-from pytket.extensions.cutensornet.general_state import GeneralBraOpKet, GeneralState
 from pytket.passes import CnXPairwiseDecomposition, DecomposeBoxes
 from pytket.pauli import Pauli, QubitPauliString
 from pytket.transform import Transform
 from pytket.utils.operators import QubitPauliOperator
+from sympy import Symbol
+
+from pytket.extensions.cutensornet.general_state import GeneralBraOpKet, GeneralState
 
 
 @pytest.mark.parametrize(

@@ -1,11 +1,10 @@
 import numpy as np
 import pytest
-from scipy.stats import unitary_group  # type: ignore
-from sympy import Symbol
-
 from pytket.circuit import Circuit, OpType, Qubit, ToffoliBox, Unitary2qBox
 from pytket.passes import CnXPairwiseDecomposition, DecomposeBoxes
 from pytket.transform import Transform
+from scipy.stats import unitary_group  # type: ignore
+from sympy import Symbol
 
 
 def random_line_circuit(n_qubits: int, layers: int) -> Circuit:
