@@ -16,7 +16,7 @@ jobs:
         os: ['ubuntu-latest']
     runs-on: ${{matrix.os}}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - uses: cachix/install-nix-action@v31.2.0
     - uses: cachix/cachix-action@v15
       with:
@@ -29,7 +29,7 @@ jobs:
     needs: build
     runs-on: cuda
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - uses: cachix/install-nix-action@v31.2.0
     - uses: cachix/cachix-action@v15
       with:

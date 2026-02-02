@@ -15,7 +15,7 @@ jobs:
     outputs:
       examples: ${{ steps.filter.outputs.examples }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - uses: dorny/paths-filter@v3
       id: filter
       with:
@@ -31,7 +31,7 @@ jobs:
     if: github.event_name == 'schedule' || needs.changes.outputs.examples == 'true'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         fetch-depth: '0'
     - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* +refs/heads/*:refs/remotes/origin/*
