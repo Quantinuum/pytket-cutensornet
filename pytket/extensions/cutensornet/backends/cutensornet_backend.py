@@ -23,9 +23,6 @@ from pytket.backends.backend import Backend, BackendResult, KwargTypes
 from pytket.backends.backendinfo import BackendInfo
 from pytket.backends.resulthandle import _ResultIdTuple
 from pytket.circuit import Circuit, OpType
-from pytket.extensions.cutensornet.general_state import (
-    GeneralState,
-)
 from pytket.passes import (  # type: ignore
     BasePass,
     CustomPass,
@@ -42,6 +39,10 @@ from pytket.predicates import (  # type: ignore
     NoSymbolsPredicate,
     Predicate,
     UserDefinedPredicate,
+)
+
+from pytket.extensions.cutensornet.general_state import (
+    GeneralState,
 )
 
 from .._metadata import __extension_name__, __extension_version__

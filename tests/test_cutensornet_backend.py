@@ -2,7 +2,6 @@ from typing import Any
 
 import numpy as np
 import pytest
-
 from pytket.circuit import (  # type: ignore
     BasisOrder,
     Circuit,
@@ -10,11 +9,12 @@ from pytket.circuit import (  # type: ignore
     OpType,
     ToffoliBox,
 )
+from pytket.passes import CliffordSimp  # type: ignore
+
 from pytket.extensions.cutensornet.backends import (
     CuTensorNetShotsBackend,
     CuTensorNetStateBackend,
 )
-from pytket.passes import CliffordSimp  # type: ignore
 
 
 def test_bell() -> None:
