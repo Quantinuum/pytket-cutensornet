@@ -149,13 +149,13 @@
       "locked": {
         "lastModified": 1740659692,
         "narHash": "sha256-fK2dMe1XOTpyEEgXVCzmE0dKrIkjPxeH0sGr6ZkqQU0=",
-        "owner": "CQCL",
+        "owner": "quantinuum",
         "repo": "tket",
         "rev": "205ca54e359a077218fb8986f4962df033b8a805",
         "type": "github"
       },
       "original": {
-        "owner": "CQCL",
+        "owner": "quantinuum",
         "repo": "tket",
         "type": "github"
       }

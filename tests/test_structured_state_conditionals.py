@@ -23,7 +23,7 @@ from pytket.extensions.cutensornet.structured_state import (
 )
 
 # This first suite of tests comes from the pytket-qir extension
-# (see https://github.com/CQCL/pytket-qir/blob/main/tests/conditional_test.py)
+# (see https://github.com/quantinuum/pytket-qir/blob/main/tests/conditional_test.py)
 # Further down, there are tests to check that the simulation works correctly.
 
 
