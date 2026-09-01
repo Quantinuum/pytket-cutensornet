@@ -34,8 +34,8 @@ setup(
     python_requires=">=3.10",
     project_urls={
         "Documentation": "https://docs.quantinuum.com/tket/extensions/pytket-cutensornet",
-        "Source": "https://github.com/CQCL/pytket-cutensornet",
-        "Tracker": "https://github.com/CQCL/pytket-cutensornet/issues",
+        "Source": "https://github.com/quantinuum/pytket-cutensornet",
+        "Tracker": "https://github.com/quantinuum/pytket-cutensornet/issues",
     },
     description="Extension for pytket, providing access to the cuTensorNet Python API.",
     long_description=open("README.md").read(),  # noqa: SIM115

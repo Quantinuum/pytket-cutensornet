@@ -16,7 +16,7 @@ represented by a tensor network with a predefined structure.
 Approximate tensor network contraction is supported. Both ``MPS`` and ``TTN``
 methods are provided.
 For an example of its use, see the ``examples/`` folder at
-https://github.com/CQCL/pytket-cutensornet.
+https://github.com/quantinuum/pytket-cutensornet.
 """
 
 from pytket.extensions.cutensornet import CuTensorNetHandle

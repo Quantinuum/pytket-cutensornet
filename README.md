@@ -41,7 +41,7 @@ This will include the necessary dependencies from CUDA toolkit. Then, you may in
 ## Bugs, support and feature requests
 
 Please file bugs and feature requests on the Github
-[issue tracker](https://github.com/CQCL/pytket-cuquantum/issues).
+[issue tracker](https://github.com/quantinuum/pytket-cutensornet/issues).
 
 ## Development
 
